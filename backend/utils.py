@@ -65,7 +65,7 @@ def classify_move_quality_chesscom(
     elif delta <= 0.5:
         return "Bon coup"
     elif delta <= 1.0:
-        return "Coup douteux (?!?)"
+        return "Imprécision (?!?)"
     elif delta <= 3.0:
         return "Erreur (?)"
     elif eval_best > 2.0 and eval_played < 0.5:
@@ -101,7 +101,7 @@ def classify_move_quality_lichess(
     elif delta >= LICHESS_THRESHOLDS["mistake"]:
         return "Erreur (?)"
     elif delta >= LICHESS_THRESHOLDS["inaccuracy"]:
-        return "Coup douteux (?!?)"
+        return "Imprécision (?!?)"
     else:
         return "Bon coup"
     
@@ -122,6 +122,6 @@ def classify_move_quality_simplified(
     elif delta_cp >= 175:
         return "Erreur (?)"
     elif delta_cp >= 100:
-        return "Coup douteux (?!?)"
+        return "Imprécision (?!?)"
     else:
         return "Bon coup"

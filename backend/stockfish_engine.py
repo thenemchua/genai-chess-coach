@@ -1,6 +1,9 @@
 import chess
 import chess.engine
 from typing import Optional
+from pathlib import Path
+
+DEFAULT_STOCKFISH_PATH = Path(__file__).resolve().parent.parent / "bin" / "stockfish"
 
 class StockfishEngine:
     """
@@ -8,7 +11,7 @@ class StockfishEngine:
     and suggesting best moves or analyzing played moves.
     """
 
-    def __init__(self, path="bin/stockfish", depth: int = 15, time_limit: Optional[float] = None):
+    def __init__(self, path: str = str(DEFAULT_STOCKFISH_PATH), depth: int = 15, time_limit: Optional[float] = None):
         """Initialize the Stockfish engine.
 
         Args:
@@ -105,7 +108,9 @@ class StockfishEngine:
         result_before = self._safe_analyse(board_before)
         eval_best = result_before.get("score")
         best_line = [m.uci() for m in result_before.get("pv", [])] if result_before else []
-        best_move = best_line[0] if best_line else None
+        best_move_obj = result_before.get("pv", [None])[0]
+        best_move = best_move_obj.uci() if best_move_obj else None
+        best_move_san = board_before.san(best_move_obj) if best_move_obj else None
         eval_best_cp = eval_best.white().score(mate_score=10000) / 100 if eval_best else None # .white is used to ensure we get the score from White's perspective (+ for White, - for Black)
 
         board_after = board.copy()
@@ -118,6 +123,7 @@ class StockfishEngine:
             "eval_played": eval_played_cp,
             "eval_best": eval_best_cp,
             "best_move": best_move,
+            "best_move_san": best_move_san,
             "best_line": best_line,
             "is_best_move": (best_move == move.uci()) if best_move else False,
         }
